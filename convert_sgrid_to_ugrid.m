@@ -106,17 +106,17 @@ for rr = 1:length(region_info.Groups)
 
     for ii = 1:length(cids)
         switch fids(ii)
-            case 1
+            case 1 % west
                 tmp_face_ids = [1 5 8 4];
-            case 2
+            case 2 % east
                 tmp_face_ids = [2 3 7 6];
-            case 3
+            case 3 % south
                 tmp_face_ids = [1 2 6 5];
-            case 4
+            case 4 % north
                 tmp_face_ids = [3 4 8 7];
-            case 5
+            case 5 % bottom
                 tmp_face_ids = [1 4 3 2];
-            case 6
+            case 6 % top
                 tmp_face_ids = [5 6 7 8];
             otherwise
                 error('Invalid face id')
