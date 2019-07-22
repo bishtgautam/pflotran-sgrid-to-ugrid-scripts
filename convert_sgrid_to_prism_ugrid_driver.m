@@ -124,8 +124,12 @@ for rr = 1:length(region_info.Groups)
 
 end
 
+disp(' /Regions/All')
 h5create(h5_ugrid_filename,['/Regions/All/Cell Ids'],length(ugrid_mat_cell_ids),'Datatype','int64');
 h5write(h5_ugrid_filename,['/Regions/All/Cell Ids'],int64(ugrid_mat_cell_ids));
 
+disp(' /Regions/Top')
+h5create(h5_ugrid_filename,['/Regions/Top/Vertex Ids'],size(top_cells(:,5:7)'),'Datatype','int64');
+h5write(h5_ugrid_filename,['/Regions/Top/Vertex Ids'],int64(top_cells(:,5:7)'));
 
 end
