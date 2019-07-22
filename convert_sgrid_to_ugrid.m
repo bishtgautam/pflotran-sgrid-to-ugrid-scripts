@@ -128,5 +128,21 @@ for rr = 1:length(region_info.Groups)
 
 end
 
+cids = reshape(sum(is_cell_active,3),nx*ny,1);
+
+top_cell_idx = zeros(nx*ny,1);
+count = 0;
+for jj = 1:ny
+    for ii = 1:nx
+        count = count + 1;
+        loc = find(cell_ids(ii,jj,:)>0);
+        top_cell_idx(count) = cell_ids(ii,jj,loc(end));
+    end
+end
+
+disp(' /Regions/Top');
+ugrid_region_fids = cells(top_cell_idx,6:end);
+h5create(h5_ugrid_filename,'/Regions/Top/Vertex Ids',size(ugrid_region_fids'),'Datatype','int64');
+h5write(h5_ugrid_filename,'/Regions/Top/Vertex Ids',int64(ugrid_region_fids'));
 
 end
