@@ -27,30 +27,15 @@ nvx = nx + 1;
 nvy = ny + 1;
 nvz = nz + 1;
 
-is_cell_active   = ones(nx,ny,nz);
-cell_ids         = zeros(nx,ny,nz);
 xv               = zeros(nvx,nvy,nvz);
 yv               = zeros(nvx,nvy,nvz);
 zv               = zeros(nvx,nvy,nvz);
-is_vertex_active = zeros(nvx,nvy,nvz);
 
+is_cell_active   = identify_active_cells(sgrid, h5_material_filename);
+cell_ids         = compute_ids_of_active_cells(sgrid, h5_material_filename);
+%is_vertex_active = identify_active_vertices(sgrid, is_cell_active);
 
-loc = find(mat_ids == 0);is_cell_active(loc) = 0;
-loc = find(mat_ids >  0);cell_ids(loc) = [1:length(loc)];
-ugrid_mat_ids = mat_ids(loc);
-ugrid_mat_cell_ids = cell_ids(mat_cell_ids(loc));
-
-[i1,i2,i3]=ind2sub(size(is_cell_active),find(is_cell_active==1));
-
-is_vertex_active(sub2ind([nvx nvy nvz],i1  ,i2  ,i3  )) = 1;
-is_vertex_active(sub2ind([nvx nvy nvz],i1+1,i2  ,i3  )) = 1;
-is_vertex_active(sub2ind([nvx nvy nvz],i1+1,i2+1,i3  )) = 1;
-is_vertex_active(sub2ind([nvx nvy nvz],i1  ,i2+1,i3  )) = 1;
-is_vertex_active(sub2ind([nvx nvy nvz],i1  ,i2  ,i3+1)) = 1;
-is_vertex_active(sub2ind([nvx nvy nvz],i1+1,i2  ,i3+1)) = 1;
-is_vertex_active(sub2ind([nvx nvy nvz],i1+1,i2+1,i3+1)) = 1;
-is_vertex_active(sub2ind([nvx nvy nvz],i1  ,i2+1,i3+1)) = 1;
-
+%[ugrid_mat_ids, ugrid_mat_cell_ids] = compute_ugrid_materials(sgrid, h5_material_filename, cell_ids);
 
 for kk = 1:nvz
     for jj = 1:nvy
