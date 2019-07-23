@@ -1,4 +1,4 @@
-function is_cell_active = compute_active_cells(sgrid, h5_material_filename)
+function is_cell_active = identify_active_cells(sgrid, h5_material_filename)
 
 mat_ids = h5read(h5_material_filename,'/Materials/Material Ids');
 

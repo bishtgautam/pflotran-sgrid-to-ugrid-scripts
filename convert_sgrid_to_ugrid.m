@@ -33,7 +33,7 @@ yv               = zeros(nvx,nvy,nvz);
 zv               = zeros(nvx,nvy,nvz);
 is_vertex_active = zeros(nvx,nvy,nvz);
 
-is_cell_active = compute_active_cells(sgrid, h5_material_filename);
+is_cell_active = identify_active_cells(sgrid, h5_material_filename);
 cell_ids       = compute_ids_of_active_cells(sgrid, h5_material_filename);
 
 loc = find(mat_ids >  0);
