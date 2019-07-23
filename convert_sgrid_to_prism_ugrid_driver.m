@@ -47,31 +47,15 @@ for kk = 1:nvz
     end
 end
 
-zc_top = reshape(z(reshape(sum(is_cell_active,3),nx*ny,1)),nx,ny);
+zc_top   = compute_elevation_at_cell_center_of_prism_grid(sgrid,is_cell_active,z);
+zv_top   = compute_elevation_at_vertices_of_prism_grid(sgrid, zc_top);
 
-zv_top = zv(:,:,1)*0;
+if (~isfield(sgrid,'nz_prism'))
+    nz_prism = ceil((max(max(zv_top))-z_min)/dz);
+else
+    nz_prism = sgrid.nz_prism;
+end
 
-zv_top(2:nx,2:ny) = ...
-    (...
-    zc_top(1:nx-1,1:ny-1) + ...
-    zc_top(2:nx  ,1:ny-1) + ...
-    zc_top(1:nx-1,2:ny  ) + ...
-    zc_top(2:nx  ,2:ny  ) ...
-    )/4;
-
-zv_top(2:nx,1   ) = (zc_top(1:nx-1,1     ) + zc_top(2:nx  ,1   ))/2;
-zv_top(2:nx,ny+1  ) = (zc_top(1:nx-1,ny    ) + zc_top(2:nx  ,ny  ))/2;
-zv_top(1   ,2:ny) = (zc_top(1     ,1:ny-1) + zc_top(1     ,2:ny))/2;
-zv_top(nx+1  ,2:ny) = (zc_top(nx    ,1:ny-1) + zc_top(nx    ,2:ny))/2;
-
-zv_top(1,1) = zc_top(1,1);
-zv_top(1,ny+1) = zc_top(1,ny);
-zv_top(nx+1,1) = zc_top(nx,1);
-zv_top(nx+1,ny+1) = zc_top(nx,ny);
-
-
-%zv_top = reshape(z(reshape(sum(is_vertex_active,3),nvx*nvy,1)),nvx,nvy);
-nz_prism = ceil((max(max(zv_top))-z_min)/dz);
 [cells, vertices] = convert_sgrid_to_prism_ugrid(xv(:,:,1),yv(:,:,1),zv_top,nz_prism,dz);
 
 ugrid_mat_ids = ones(size(cells,1),1);
