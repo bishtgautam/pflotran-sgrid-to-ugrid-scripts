@@ -1,3 +1,5 @@
+function plot_ugrids(save_figure)
+
 h5_ugrid_filename = '/Users/bish218/projects_1drive/elm-pflotran-coupling/dataset/5km/pflotran/5km_hex_ugrid.h5';
 region_info = h5info(h5_ugrid_filename,'/Regions');
 
@@ -34,8 +36,10 @@ zlim([0 800])
 view(-33,70)
 caxis([100 500])
 colorbar
-orient landscape
-print -dpdf hex_ugrid.pdf -fillpage
+if (save_figure)
+    orient landscape
+    print -dpdf hex_ugrid.pdf -fillpage
+end
 
 
 h5_ugrid_filename = '/Users/bish218/projects_1drive/elm-pflotran-coupling/dataset/5km/pflotran/5km_prism_ugrid.h5';
@@ -78,6 +82,8 @@ zlim([0 800])
 view(-33,70)
 caxis([100 500])
 colorbar
-orient landscape
-print -dpdf prism_ugrid.pdf -fillpage
+if (save_figure)
+    orient landscape
+    print -dpdf prism_ugrid.pdf -fillpage
+end
 
