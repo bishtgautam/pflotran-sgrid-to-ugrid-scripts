@@ -18,7 +18,6 @@ if (nx*ny*nz ~= length(mat_ids))
     error(sprintf("The number of grid cells are not equal to material ids.\nNo. of grid cells   = %d\nNo. of material ids = %d%d",nx*ny*nz,length(mat_ids)))
 end
 
-
 x = [0:dx:dx*nx] + x_min;
 y = [0:dx:dy*ny] + y_min;
 z = [0:dz:dz*nz] + z_min;
@@ -26,12 +25,6 @@ z = [0:dz:dz*nz] + z_min;
 nvx = nx + 1;
 nvy = ny + 1;
 nvz = nz + 1;
-
-cell_ids         = zeros(nx,ny,nz);
-xv               = zeros(nvx,nvy,nvz);
-yv               = zeros(nvx,nvy,nvz);
-zv               = zeros(nvx,nvy,nvz);
-is_vertex_active = zeros(nvx,nvy,nvz);
 
 is_cell_active = identify_active_cells(sgrid, h5_material_filename);
 cell_ids       = compute_ids_of_active_cells(sgrid, h5_material_filename);
@@ -42,6 +35,10 @@ ugrid_mat_ids = mat_ids(loc);
 ugrid_mat_cell_ids = cell_ids(mat_cell_ids(loc));
 
 is_vertex_active = identify_active_vertices(sgrid, is_cell_active);
+
+xv = zeros(nvx,nvy,nvz);
+yv = zeros(nvx,nvy,nvz);
+zv = zeros(nvx,nvy,nvz);
 
 for kk = 1:nvz
     for jj = 1:nvy
