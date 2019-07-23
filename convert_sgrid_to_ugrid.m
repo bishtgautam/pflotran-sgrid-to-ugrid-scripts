@@ -1,4 +1,4 @@
-function convert_sgrid_to_ugrid(sgrid,h5_material_filename,h5_region_filename,h5_ugrid_filename)
+function convert_sgrid_to_ugrid(sgrid,h5_ugrid_filename)
 
 nx = sgrid.nx;
 ny = sgrid.ny;
@@ -6,6 +6,10 @@ nz = sgrid.nz;
 dx = sgrid.dx;
 dy = sgrid.dy;
 dz = sgrid.dz;
+
+h5_material_filename = sgrid.h5_material_filename;
+h5_region_filename   = sgrid.h5_region_filename;
+
 
 x_min = sgrid.origin_x;
 y_min = sgrid.origin_y;

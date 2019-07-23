@@ -1,4 +1,4 @@
-function create_mapping_file(sgrid,h5_ugrid_filename,h5_material_filename,mesh_typename,elm_nsoil,base_map_filename)
+function create_mapping_file(sgrid,h5_ugrid_filename,mesh_typename,elm_nsoil,base_map_filename)
 
 MESH_PRI = 1;
 MESH_HEX = 2;
@@ -19,6 +19,8 @@ nz = sgrid.nz;
 
 top = h5read(h5_ugrid_filename,'/Regions/Top/Vertex Ids')';
 ncells_per_lyr = size(top,1);
+
+h5_material_filename = sgrid.h5_material_filename;
 
 cell_ids = compute_ids_of_active_cells(sgrid, h5_material_filename);
 
