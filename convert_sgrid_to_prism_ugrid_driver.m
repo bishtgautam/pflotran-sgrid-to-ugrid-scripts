@@ -71,8 +71,8 @@ zv_top(nx+1,ny+1) = zc_top(nx,ny);
 
 
 %zv_top = reshape(z(reshape(sum(is_vertex_active,3),nvx*nvy,1)),nvx,nvy);
-
-[cells, vertices] = convert_sgrid_to_prism_ugrid(xv(:,:,1),yv(:,:,1),zv_top,ceil((max(max(zv_top))-z_min)/dz),dz);
+nz_prism = ceil((max(max(zv_top))-z_min)/dz);
+[cells, vertices] = convert_sgrid_to_prism_ugrid(xv(:,:,1),yv(:,:,1),zv_top,nz_prism,dz);
 
 ugrid_mat_ids = ones(size(cells,1),1);
 ugrid_mat_cell_ids = [1:size(cells,1)];
@@ -93,9 +93,8 @@ h5write(h5_ugrid_filename,'/Domain/Vertices',vertices');
 h5write(h5_ugrid_filename,'/Materials/Cell Ids',int64(ugrid_mat_cell_ids));
 h5write(h5_ugrid_filename,'/Materials/Material Ids',int64(ugrid_mat_ids));
 
-top_cells = cells(end-nx*ny*4+1:end,:);
-
-
+top_cell_idx = find_cell_ids_in_a_layer_of_prism_grid(sgrid,nz_prism,0);
+top_cells = cells(top_cell_idx,:);
 
 region_info = h5info(h5_region_filename,'/Regions');
 
