@@ -61,9 +61,33 @@ for kk = 1:nvz
         end
     end
 end
-zv_top = reshape(z(reshape(sum(is_vertex_active,3),nvx*nvy,1)),nvx,nvy);
 
-[cells, vertices] = convert_sgrid_to_prism_ugrid(xv(:,:,1),yv(:,:,1),zv_top,(max(max(zv_top))-z_min)/dz,dz);
+zc_top = reshape(z(reshape(sum(is_cell_active,3),nx*ny,1)),nx,ny);
+
+zv_top = zv(:,:,1)*0;
+
+zv_top(2:nx,2:ny) = ...
+    (...
+    zc_top(1:nx-1,1:ny-1) + ...
+    zc_top(2:nx  ,1:ny-1) + ...
+    zc_top(1:nx-1,2:ny  ) + ...
+    zc_top(2:nx  ,2:ny  ) ...
+    )/4;
+
+zv_top(2:nx,1   ) = (zc_top(1:nx-1,1     ) + zc_top(2:nx  ,1   ))/2;
+zv_top(2:nx,ny+1  ) = (zc_top(1:nx-1,ny    ) + zc_top(2:nx  ,ny  ))/2;
+zv_top(1   ,2:ny) = (zc_top(1     ,1:ny-1) + zc_top(1     ,2:ny))/2;
+zv_top(nx+1  ,2:ny) = (zc_top(nx    ,1:ny-1) + zc_top(nx    ,2:ny))/2;
+
+zv_top(1,1) = zc_top(1,1);
+zv_top(1,ny+1) = zc_top(1,ny);
+zv_top(nx+1,1) = zc_top(nx,1);
+zv_top(nx+1,ny+1) = zc_top(nx,ny);
+
+
+%zv_top = reshape(z(reshape(sum(is_vertex_active,3),nvx*nvy,1)),nvx,nvy);
+
+[cells, vertices] = convert_sgrid_to_prism_ugrid(xv(:,:,1),yv(:,:,1),zv_top,ceil((max(max(zv_top))-z_min)/dz),dz);
 
 ugrid_mat_ids = ones(size(cells,1),1);
 ugrid_mat_cell_ids = [1:size(cells,1)];
