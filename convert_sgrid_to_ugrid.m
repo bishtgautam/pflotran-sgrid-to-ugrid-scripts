@@ -107,15 +107,7 @@ end
 
 cids = reshape(sum(is_cell_active,3),nx*ny,1);
 
-top_cell_idx = zeros(nx*ny,1);
-count = 0;
-for jj = 1:ny
-    for ii = 1:nx
-        count = count + 1;
-        loc = find(cell_ids(ii,jj,:)>0);
-        top_cell_idx(count) = cell_ids(ii,jj,loc(end));
-    end
-end
+top_cell_idx = find_cell_ids_in_a_layer_of_hex_grid(sgrid,cell_ids,0);
 
 disp(' /Regions/Top');
 ugrid_region_fids = cells(top_cell_idx,6:end);
