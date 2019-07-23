@@ -7,9 +7,16 @@ dx = sgrid.dx;
 dy = sgrid.dy;
 dz = sgrid.dz;
 
-h5_material_filename = sgrid.h5_material_filename;
-h5_region_filename   = sgrid.h5_region_filename;
+h5_material_filename = '';
+h5_region_filename   = '';
 
+if isfield(sgrid,'h5_material_filename')
+ h5_material_filename = sgrid.h5_material_filename;
+end
+
+if isfield(sgrid,'h5_region_filename')
+    h5_region_filename   = sgrid.h5_region_filename;
+end
 
 x_min = sgrid.origin_x;
 y_min = sgrid.origin_y;
@@ -61,52 +68,54 @@ h5write(h5_ugrid_filename,'/Materials/Cell Ids',int64(ugrid_mat_cell_ids));
 h5write(h5_ugrid_filename,'/Materials/Material Ids',int64(ugrid_mat_ids));
 
 
-region_info = h5info(h5_region_filename,'/Regions');
-
-for rr = 1:length(region_info.Groups)
-
-    if (rr == 1)
-        disp('Adding following regions: ');
-    end
-    disp([' ' region_info.Groups(rr).Name]);
-    info = h5info(h5_region_filename,region_info.Groups(rr).Name);
-    cids = h5read(h5_region_filename,[region_info.Groups(rr).Name '/' info.Datasets(1).Name]);
+if (~isempty(h5_region_filename))
+    region_info = h5info(h5_region_filename,'/Regions');
     
-    if (~strcmp(info.Datasets(2).Name,'Face Ids'))
-        error(['For ' region_info.Groups(rr).Name ': "Face Ids" not found']);
-    end
-    
-    fids = h5read(h5_region_filename,[region_info.Groups(rr).Name '/' info.Datasets(2).Name]);
-    
-
-    ugrid_region_cids   = cell_ids(cids); 
-    tmp_cell_vertex_ids = cells(cell_ids(cids),2:end);
-    ugrid_region_fids = zeros(length(cids),4);
-
-    h5create(h5_ugrid_filename,[region_info.Groups(rr).Name '/Vertex Ids'],size(ugrid_region_fids'),'Datatype','int64');
-
-    for ii = 1:length(cids)
-        switch fids(ii)
-            case 1 % west
-                tmp_face_ids = [1 5 8 4];
-            case 2 % east
-                tmp_face_ids = [2 3 7 6];
-            case 3 % south
-                tmp_face_ids = [1 2 6 5];
-            case 4 % north
-                tmp_face_ids = [3 4 8 7];
-            case 5 % bottom
-                tmp_face_ids = [1 4 3 2];
-            case 6 % top
-                tmp_face_ids = [5 6 7 8];
-            otherwise
-                error('Invalid face id')
+    for rr = 1:length(region_info.Groups)
+        
+        if (rr == 1)
+            disp('Adding following regions: ');
         end
-        ugrid_region_fids(ii,:) = tmp_cell_vertex_ids(ii,tmp_face_ids);
+        disp([' ' region_info.Groups(rr).Name]);
+        info = h5info(h5_region_filename,region_info.Groups(rr).Name);
+        cids = h5read(h5_region_filename,[region_info.Groups(rr).Name '/' info.Datasets(1).Name]);
+        
+        if (~strcmp(info.Datasets(2).Name,'Face Ids'))
+            error(['For ' region_info.Groups(rr).Name ': "Face Ids" not found']);
+        end
+        
+        fids = h5read(h5_region_filename,[region_info.Groups(rr).Name '/' info.Datasets(2).Name]);
+        
+        
+        ugrid_region_cids   = cell_ids(cids);
+        tmp_cell_vertex_ids = cells(cell_ids(cids),2:end);
+        ugrid_region_fids = zeros(length(cids),4);
+        
+        h5create(h5_ugrid_filename,[region_info.Groups(rr).Name '/Vertex Ids'],size(ugrid_region_fids'),'Datatype','int64');
+        
+        for ii = 1:length(cids)
+            switch fids(ii)
+                case 1 % west
+                    tmp_face_ids = [1 5 8 4];
+                case 2 % east
+                    tmp_face_ids = [2 3 7 6];
+                case 3 % south
+                    tmp_face_ids = [1 2 6 5];
+                case 4 % north
+                    tmp_face_ids = [3 4 8 7];
+                case 5 % bottom
+                    tmp_face_ids = [1 4 3 2];
+                case 6 % top
+                    tmp_face_ids = [5 6 7 8];
+                otherwise
+                    error('Invalid face id')
+            end
+            ugrid_region_fids(ii,:) = tmp_cell_vertex_ids(ii,tmp_face_ids);
+        end
+        
+        h5write(h5_ugrid_filename,[region_info.Groups(rr).Name '/Vertex Ids'],int64(ugrid_region_fids'));
+        
     end
-    
-    h5write(h5_ugrid_filename,[region_info.Groups(rr).Name '/Vertex Ids'],int64(ugrid_region_fids'));
-
 end
 
 cids = reshape(sum(is_cell_active,3),nx*ny,1);
