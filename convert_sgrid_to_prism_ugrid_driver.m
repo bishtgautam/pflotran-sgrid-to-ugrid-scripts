@@ -1,4 +1,4 @@
-function convert_sgrid_to_prism_ugrid_driver(sgrid,h5_ugrid_filename)
+function convert_sgrid_to_prism_ugrid_driver(sgrid,ugrid)
 
 nx = sgrid.nx;
 ny = sgrid.ny;
@@ -60,16 +60,16 @@ end
 zc_top   = compute_elevation_at_cell_center_of_prism_grid(sgrid,is_cell_active,z);
 zv_top   = compute_elevation_at_vertices_of_prism_grid(sgrid, zc_top);
 
-if (~isfield(sgrid,'nz_prism'))
+if (~isfield(ugrid,'nz'))
     nz_prism = ceil((max(max(zv_top))-z_min)/dz);
 else
-    nz_prism = sgrid.nz_prism;
+    nz_prism = ugrid.nz;
 end
 
-if (~isfield(sgrid,'zv_prism'))
+if (~isfield(ugrid,'zv'))
     zv_prism = [0:nz_prism]*dz;
 else
-    zv_prism = sgrid.zv_prism;
+    zv_prism = ugrid.zv;
     nz_prism = length(zv_prism)-1;
 end
 
@@ -82,20 +82,20 @@ end
 % ugrid_mat_cell_ids = [1:size(cells,1)];
 
 
-system(['rm -f ' h5_ugrid_filename]);
+system(['rm -f ' ugrid.h5_filename]);
 
-fprintf('Creating the following mesh file:\n\t%s\n\n', h5_ugrid_filename);
+fprintf('Creating the following mesh file:\n\t%s\n\n', ugrid.h5_filename);
 
-h5create(h5_ugrid_filename,'/Domain/Cells',size(cells'),'Datatype','int64');
-h5create(h5_ugrid_filename,'/Domain/Vertices',size(vertices'));
-h5create(h5_ugrid_filename,'/Materials/Cell Ids',length(ugrid_mat_cell_ids),'Datatype','int64');
-h5create(h5_ugrid_filename,'/Materials/Material Ids',length(ugrid_mat_ids),'Datatype','int64');
+h5create(ugrid.h5_filename,'/Domain/Cells',size(cells'),'Datatype','int64');
+h5create(ugrid.h5_filename,'/Domain/Vertices',size(vertices'));
+h5create(ugrid.h5_filename,'/Materials/Cell Ids',length(ugrid_mat_cell_ids),'Datatype','int64');
+h5create(ugrid.h5_filename,'/Materials/Material Ids',length(ugrid_mat_ids),'Datatype','int64');
 
 
-h5write(h5_ugrid_filename,'/Domain/Cells',int64(cells'));
-h5write(h5_ugrid_filename,'/Domain/Vertices',vertices');
-h5write(h5_ugrid_filename,'/Materials/Cell Ids',int64(ugrid_mat_cell_ids));
-h5write(h5_ugrid_filename,'/Materials/Material Ids',int64(ugrid_mat_ids));
+h5write(ugrid.h5_filename,'/Domain/Cells',int64(cells'));
+h5write(ugrid.h5_filename,'/Domain/Vertices',vertices');
+h5write(ugrid.h5_filename,'/Materials/Cell Ids',int64(ugrid_mat_cell_ids));
+h5write(ugrid.h5_filename,'/Materials/Material Ids',int64(ugrid_mat_ids));
 
 top_cell_idx = find_cell_ids_in_a_layer_of_prism_grid(sgrid,nz_prism,0);
 top_cells = cells(top_cell_idx,:);
@@ -124,7 +124,7 @@ if (~isempty(h5_region_filename))
         
         tmp_cids = double(cids) - floor(double(cids)/nx/ny)*nx*ny;
         
-        h5create(h5_ugrid_filename,[region_info.Groups(rr).Name '/Vertex Ids'],size(ugrid_region_fids'),'Datatype','int64');
+        h5create(ugrid.h5_filename,[region_info.Groups(rr).Name '/Vertex Ids'],size(ugrid_region_fids'),'Datatype','int64');
         
         for ii = 1:length(cids)
             
@@ -133,17 +133,17 @@ if (~isempty(h5_region_filename))
             ugrid_region_fids((ii-1)*4+1:ii*4,:) = top_cells((tmp_id-1)*4+1:tmp_id*4,5:7);
         end
         
-        h5write(h5_ugrid_filename,[region_info.Groups(rr).Name '/Vertex Ids'],int64(ugrid_region_fids'));
+        h5write(ugrid.h5_filename,[region_info.Groups(rr).Name '/Vertex Ids'],int64(ugrid_region_fids'));
         
     end
 end
 
 disp(' /Regions/All')
-h5create(h5_ugrid_filename,['/Regions/All/Cell Ids'],length(ugrid_mat_cell_ids),'Datatype','int64');
-h5write(h5_ugrid_filename,['/Regions/All/Cell Ids'],int64(ugrid_mat_cell_ids));
+h5create(ugrid.h5_filename,['/Regions/All/Cell Ids'],length(ugrid_mat_cell_ids),'Datatype','int64');
+h5write(ugrid.h5_filename,['/Regions/All/Cell Ids'],int64(ugrid_mat_cell_ids));
 
 disp(' /Regions/Top')
-h5create(h5_ugrid_filename,['/Regions/Top/Vertex Ids'],size(top_cells(:,5:7)'),'Datatype','int64');
-h5write(h5_ugrid_filename,['/Regions/Top/Vertex Ids'],int64(top_cells(:,5:7)'));
+h5create(ugrid.h5_filename,['/Regions/Top/Vertex Ids'],size(top_cells(:,5:7)'),'Datatype','int64');
+h5write(ugrid.h5_filename,['/Regions/Top/Vertex Ids'],int64(top_cells(:,5:7)'));
 
 end

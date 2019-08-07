@@ -1,8 +1,12 @@
-function create_mapping_file(sgrid,h5_ugrid_filename,mesh_typename,elm_nsoil,base_map_filename)
+function create_mapping_file(sgrid,ugrid,elm_nsoil)
 
 MESH_PRI = 1;
 MESH_HEX = 2;
 
+
+h5_ugrid_filename = ugrid.h5_filename;
+mesh_typename     = ugrid.mesh_typename;
+map_base_filename = ugrid.map_base_filename;
 
 switch lower(mesh_typename)
     case 'prism'
@@ -38,12 +42,12 @@ switch mesh_type
         end
         
     case MESH_PRI
-        if (~isfield(sgrid,'nz_prism'))
+        if (~isfield(ugrid,'nz'))
             zc_top   = compute_elevation_at_cell_center_of_prism_grid(sgrid,is_cell_active,z);
             zv_top   = compute_elevation_at_vertices_of_prism_grid(sgrid, zc_top);
             nz_prism = ceil((max(max(zv_top))-z_min)/dz);
         else
-            nz_prism = sgrid.nz_prism;
+            nz_prism = ugrid.nz;
         end
         
         pfl_cell_idx = zeros(ncells_per_lyr,elm_nsoil);
@@ -72,7 +76,7 @@ elm_2_pfl_wt_1d = reshape(elm_2_pfl_wt,a*b,1);
 map(:,1) = elm_cell_idx_1d(idx);
 map(:,2) = pfl_cell_idx_1d(idx);
 map(:,3) = pfl_2_elm_wt_1d(idx);
-write_mapping_file([base_map_filename '_pf2elm.meshmap'], elm_nsoil, map);
+write_mapping_file([map_base_filename '_pf2elm.meshmap'], elm_nsoil, map);
 clear map
 
 % ELM --to -- PF subsurface
@@ -80,7 +84,7 @@ clear map
 map(:,1) = pfl_cell_idx_1d(idx);
 map(:,2) = elm_cell_idx_1d(idx);
 map(:,3) = elm_2_pfl_wt_1d(idx);
-write_mapping_file([base_map_filename '_elm2pf.meshmap'], elm_nsoil, map);
+write_mapping_file([map_base_filename '_elm2pf.meshmap'], elm_nsoil, map);
 clear map
 
 % ELM --to -- PF surface only
@@ -88,5 +92,5 @@ clear map
 map(:,1) = pfl_cell_idx(idx,1);
 map(:,2) = elm_cell_idx(idx,1);
 map(:,3) = elm_2_pfl_wt(idx,1);
-write_mapping_file([base_map_filename '_elm2pf_surf.meshmap'], elm_nsoil, map);
+write_mapping_file([map_base_filename '_elm2pf_surf.meshmap'], elm_nsoil, map);
 clear map
