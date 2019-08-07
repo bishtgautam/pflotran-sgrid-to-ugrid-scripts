@@ -38,9 +38,9 @@ if (~isempty(h5_material_filename))
                 loc = find(zc>= zv_prism(kk) & zc<=zv_prism(kk+1));
                 
                 if (~isempty(loc))
-                    mat_ids(ii,jj,kk-nz_prism+1) = mode(tmp_ids(loc));
+                    mat_ids(ii,jj,nz_prism-kk+1) = mode(tmp_ids(loc));
                 else
-                    mat_ids(ii,jj,kk-nz_prism+1) = tmp_ids(end);
+                    mat_ids(ii,jj,nz_prism-kk+1) = tmp_ids(end);
                 end
                 
             end
@@ -48,8 +48,8 @@ if (~isempty(h5_material_filename))
     end
     
     tmp = reshape(mat_ids,nx*ny*nz_prism,1);
-    ugrid_mat_ids = reshape([tmp tmp tmp tmp]',nx*ny*nz*4,1);
-    ugrid_mat_cell_ids = [1:nx*ny*nz*4];
+    ugrid_mat_ids = reshape([tmp tmp tmp tmp]',nx*ny*nz_prism*4,1);
+    ugrid_mat_cell_ids = [1:nx*ny*nz_prism*4];
     
     
 else
