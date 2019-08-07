@@ -22,15 +22,6 @@ x_min = sgrid.origin_x;
 y_min = sgrid.origin_y;
 z_min = sgrid.origin_z;
 
-
-% mat_ids = h5read(h5_material_filename,'/Materials/Material Ids');
-% mat_cell_ids = h5read(h5_material_filename,'/Materials/Cell Ids');
-% 
-% if (nx*ny*nz ~= length(mat_ids))
-%     error(sprintf("The number of grid cells are not equal to material ids.\nNo. of grid cells   = %d\nNo. of material ids = %d%d",nx*ny*nz,length(mat_ids)))
-% end
-
-
 x = [0:dx:dx*nx] + x_min;
 y = [0:dx:dy*ny] + y_min;
 z = [0:dz:dz*nz] + z_min;
@@ -39,15 +30,22 @@ nvx = nx + 1;
 nvy = ny + 1;
 nvz = nz + 1;
 
-xv               = zeros(nvx,nvy,nvz);
-yv               = zeros(nvx,nvy,nvz);
-zv               = zeros(nvx,nvy,nvz);
-
 is_cell_active   = identify_active_cells(sgrid, h5_material_filename);
-cell_ids         = compute_ids_of_active_cells(sgrid, h5_material_filename);
+%cell_ids         = compute_ids_of_active_cells(sgrid, h5_material_filename);
 %is_vertex_active = identify_active_vertices(sgrid, is_cell_active);
 
 %[ugrid_mat_ids, ugrid_mat_cell_ids] = compute_ugrid_materials(sgrid, h5_material_filename, cell_ids);
+
+% mat_ids = h5read(h5_material_filename,'/Materials/Material Ids');
+% mat_cell_ids = h5read(h5_material_filename,'/Materials/Cell Ids');
+% 
+% if (nx*ny*nz ~= length(mat_ids))
+%     error(sprintf("The number of grid cells are not equal to material ids.\nNo. of grid cells   = %d\nNo. of material ids = %d%d",nx*ny*nz,length(mat_ids)))
+% end
+
+xv               = zeros(nvx,nvy,nvz);
+yv               = zeros(nvx,nvy,nvz);
+zv               = zeros(nvx,nvy,nvz);
 
 for kk = 1:nvz
     for jj = 1:nvy
@@ -70,8 +68,12 @@ end
 
 [cells, vertices] = convert_sgrid_to_prism_ugrid(xv(:,:,1),yv(:,:,1),zv_top,nz_prism,dz);
 
-ugrid_mat_ids = ones(size(cells,1),1);
-ugrid_mat_cell_ids = [1:size(cells,1)];
+zv_prism = [0:nz_prism*dz];
+
+[ugrid_mat_ids, ugrid_mat_cell_ids] = compute_prism_ugrid_materials(sgrid, h5_material_filename, zv_prism);
+
+% ugrid_mat_ids = ones(size(cells,1),1);
+% ugrid_mat_cell_ids = [1:size(cells,1)];
 
 
 system(['rm -f ' h5_ugrid_filename]);
