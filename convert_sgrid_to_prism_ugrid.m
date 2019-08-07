@@ -1,5 +1,31 @@
 function [cells, vertices] = convert_sgrid_to_prism_ugrid(xv,yv,zv,nz,dz)
 
+%
+%  IDs of prismatic cells that are generated from structured grid
+%
+%          o ------- o ------- o
+%          | \  19 / | \  23 / |
+%          |  \   /  |  \   /  |
+%          |20  o  18|24  o  22|
+%          |  /   \  |  /   \  |
+%          | /  17  \| /  21 \ |
+%          o ------- o ------- o
+%          | \  11 / | \ 15  / |
+%          |  \   /  |  \   /  |
+%          |12  o  10|17  o  14|
+%          |  /   \  |  /   \  |
+%          | /  9  \ | / 13  \ |
+%          o ------- o ------- o
+%          | \  3  / | \  7  / |
+%          |  \   /  |  \   /  |
+%          | 4  o  2 | 8  o  6 |
+%   y      |  /   \  |  /   \  |
+%  /|\     | /  1  \ | /  5  \ |
+%   |      o ------- o ------- o
+%   |
+%    -------> x
+%
+
 [nvx,nvy] = size(xv);
 
 nx = nvx-1;
