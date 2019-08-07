@@ -1,4 +1,4 @@
-function [cells, vertices] = convert_sgrid_to_prism_ugrid(xv,yv,zv,nz,dz)
+function [cells, vertices] = convert_sgrid_to_prism_ugrid(xv,yv,zv_top,zv_vertical)
 
 %
 %  IDs of prismatic cells that are generated from structured grid
@@ -31,7 +31,8 @@ function [cells, vertices] = convert_sgrid_to_prism_ugrid(xv,yv,zv,nz,dz)
 nx = nvx-1;
 ny = nvy-1;
 
-nvz = nz + 1;
+nvz = length(zv_vertical);
+nz  = nvz - 1;
 
 vertices = zeros(nvx*nvy*nvz + nx*ny*nvz,3);
 cells    = zeros(nx *ny *nz * 4, 7);
@@ -48,7 +49,7 @@ for kk = 1:nvz
         for ii = 1:nvx
             vertices(count,1) = xv(ii,jj);
             vertices(count,2) = yv(ii,jj);
-            vertices(count,3) = zv(ii,jj) - (nvz-kk)*dz;
+            vertices(count,3) = zv_top(ii,jj) - zv_vertical(nvz-kk+1);
             count = count + 1;
         end
     end
@@ -70,10 +71,10 @@ for kk = 1:nvz
                 yv(ii  ,jj+1) )/4;
             
             vertices(count,3) = (...
-                zv(ii  ,jj  ) + ...
-                zv(ii+1,jj  ) + ...
-                zv(ii+1,jj+1) + ...
-                zv(ii  ,jj+1) )/4 - (nvz-kk)*dz;
+                zv_top(ii  ,jj  ) + ...
+                zv_top(ii+1,jj  ) + ...
+                zv_top(ii+1,jj+1) + ...
+                zv_top(ii  ,jj+1) )/4 - zv_vertical(nvz-kk+1);
             
             id_cen(ii,jj,kk) = count;
             count = count + 1;

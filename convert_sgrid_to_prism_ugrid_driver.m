@@ -66,9 +66,10 @@ else
     nz_prism = sgrid.nz_prism;
 end
 
-[cells, vertices] = convert_sgrid_to_prism_ugrid(xv(:,:,1),yv(:,:,1),zv_top,nz_prism,dz);
+zv_prism = [0:nz_prism]*dz;
 
-zv_prism = [0:nz_prism*dz];
+[cells, vertices] = convert_sgrid_to_prism_ugrid(xv(:,:,1),yv(:,:,1),zv_top,zv_prism);
+
 
 [ugrid_mat_ids, ugrid_mat_cell_ids] = compute_prism_ugrid_materials(sgrid, h5_material_filename, zv_prism);
 
