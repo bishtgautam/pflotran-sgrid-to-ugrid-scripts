@@ -46,17 +46,17 @@ switch mesh_type
             nz_prism = sgrid.nz_prism;
         end
         
-        pfl_cell_idx = zeros(ncells_per_lyr*4,elm_nsoil);
-        elm_cell_idx = zeros(ncells_per_lyr*4,elm_nsoil);
-        pfl_2_elm_wt = ones(ncells_per_lyr*4,elm_nsoil)/4.0;
-        elm_2_pfl_wt = ones(ncells_per_lyr*4,elm_nsoil);
+        pfl_cell_idx = zeros(ncells_per_lyr,elm_nsoil);
+        elm_cell_idx = zeros(ncells_per_lyr,elm_nsoil);
+        pfl_2_elm_wt = ones(ncells_per_lyr,elm_nsoil)/4.0;
+        elm_2_pfl_wt = ones(ncells_per_lyr,elm_nsoil);
 
         for kk = 1:elm_nsoil
             pfl_cell_idx(:,kk) = find_cell_ids_in_a_layer_of_prism_grid(sgrid,nz_prism,kk-1);
-            elm_cell_idx(1:4:end,kk) = [kk:elm_nsoil:nx*ny*clm_nsoil];
-            elm_cell_idx(2:4:end,kk) = [kk:elm_nsoil:nx*ny*clm_nsoil];
-            elm_cell_idx(3:4:end,kk) = [kk:elm_nsoil:nx*ny*clm_nsoil];
-            elm_cell_idx(4:4:end,kk) = [kk:elm_nsoil:nx*ny*clm_nsoil];
+            elm_cell_idx(1:4:end,kk) = [kk:elm_nsoil:nx*ny*elm_nsoil];
+            elm_cell_idx(2:4:end,kk) = [kk:elm_nsoil:nx*ny*elm_nsoil];
+            elm_cell_idx(3:4:end,kk) = [kk:elm_nsoil:nx*ny*elm_nsoil];
+            elm_cell_idx(4:4:end,kk) = [kk:elm_nsoil:nx*ny*elm_nsoil];
         end
 end
 
