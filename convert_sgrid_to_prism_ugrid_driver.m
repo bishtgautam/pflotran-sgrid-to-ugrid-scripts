@@ -82,8 +82,8 @@ fprintf('Creating the following mesh file:\n\t%s\n\n', h5_ugrid_filename);
 
 h5create(h5_ugrid_filename,'/Domain/Cells',size(cells'),'Datatype','int64');
 h5create(h5_ugrid_filename,'/Domain/Vertices',size(vertices'));
-h5create(h5_ugrid_filename,'/Materials/Cell Ids',length(ugrid_mat_ids),'Datatype','int64');
-h5create(h5_ugrid_filename,'/Materials/Material Ids',length(ugrid_mat_cell_ids),'Datatype','int64');
+h5create(h5_ugrid_filename,'/Materials/Cell Ids',length(ugrid_mat_cell_ids),'Datatype','int64');
+h5create(h5_ugrid_filename,'/Materials/Material Ids',length(ugrid_mat_ids),'Datatype','int64');
 
 
 h5write(h5_ugrid_filename,'/Domain/Cells',int64(cells'));
