@@ -66,7 +66,12 @@ else
     nz_prism = sgrid.nz_prism;
 end
 
-zv_prism = [0:nz_prism]*dz;
+if (~isfield(sgrid,'zv_prism'))
+    zv_prism = [0:nz_prism]*dz;
+else
+    zv_prism = sgrid.zv_prism;
+    nz_prism = length(zv_prism)-1;
+end
 
 [cells, vertices] = convert_sgrid_to_prism_ugrid(xv(:,:,1),yv(:,:,1),zv_top,zv_prism);
 
